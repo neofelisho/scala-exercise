@@ -13,16 +13,15 @@ There are two APPs in this project. One is the restaurant server, another is sim
 ### Restaurant Server
 
 This server is build by [Akka HTTP](https://doc.akka.io/docs/akka-http/current/index.html). 
-Enter the `sbt shell` and execute `runMain com.github.neofelis.exercise.RestaurantServer` to start.
+Enter the `sbt shell` and execute `runMain com.github.neofelis.exercise.controller.RestaurantServer` to start.
 
 ```shell script
-sbt:exercise> runMain com.github.neofelis.exercise.RestaurantServer
+[IJ]sbt:exercise> runMain com.github.neofelis.exercise.controller.RestaurantServer 
 [warn] Multiple main classes detected.  Run 'show discoveredMainClasses' to see the list
-[info] running com.github.neofelis.exercise.RestaurantServer 
-18:03:32.706 [default-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+[info] running com.github.neofelis.exercise.controller.RestaurantServer 
+00:54:08.650 [default-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
 Server online at http://localhost:8080/
 Press RETURN to stop...
-[success] Total time: 5 s, completed Jul 29, 2020, 6:03:36 PM
 ```
 
 ### Staff Client
@@ -32,13 +31,13 @@ By sending order requests in parallel to simulate the situation of multiple staf
 Enter the `sbt shell` and execute `runMain com.github.neofelis.exercise.StaffClient` to start.
 
 ```shell script
-[IJ]sbt:exercise> runMain com.github.neofelis.exercise.StaffClient
+[IJ]sbt:exercise> runMain com.github.neofelis.exercise.app.StaffClient
 [warn] Multiple main classes detected.  Run 'show discoveredMainClasses' to see the list
-[info] running com.github.neofelis.exercise.StaffClient 
-18:31:58.286 [default-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-order: Order(List(Item(3,48), Item(3,48), Item(3,2), Item(3,44), Item(3,3), Item(3,42), Item(3,11), Item(3,36), Item(3,33), Item(3,5))) created: HttpResponse(200 OK,List(Server: akka-http/10.1.12, Date: Wed, 29 Jul 2020 11:31:59 GMT),HttpEntity.Strict(text/plain; charset=UTF-8,13 bytes total),HttpProtocol(HTTP/1.1))
-order: Order(List(Item(4,39), Item(4,31), Item(4,39), Item(4,25), Item(4,16), Item(4,28), Item(4,26), Item(4,48), Item(4,48), Item(4,29))) created: HttpResponse(200 OK,List(Server: akka-http/10.1.12, Date: Wed, 29 Jul 2020 11:31:59 GMT),HttpEntity.Strict(text/plain; charset=UTF-8,13 bytes total),HttpProtocol(HTTP/1.1))
-order: Order(List(Item(5,39), Item(5,2), Item(5,21), Item(5,27), Item(5,43), Item(5,7), Item(5,30), Item(5,9), Item(5,30), Item(5,38))) created: HttpResponse(200 OK,List(Server: akka-http/10.1.12, Date: Wed, 29 Jul 2020 11:31:59 GMT),HttpEntity.Strict(text/plain; charset=UTF-8,13 bytes total),HttpProtocol(HTTP/1.1))
+[info] running com.github.neofelis.exercise.app.StaffClient 
+00:55:49.858 [default-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+order: Order(List(Item(2,5), Item(2,19), Item(2,31), Item(2,47), Item(2,6), Item(2,43), Item(2,2), Item(2,40), Item(2,44), Item(2,7))) created: HttpResponse(200 OK,List(Server: akka-http/10.1.12, Date: Wed, 29 Jul 2020 17:55:51 GMT),HttpEntity.Strict(text/plain; charset=UTF-8,13 bytes total),HttpProtocol(HTTP/1.1))
+order: Order(List(Item(5,18), Item(5,19), Item(5,48), Item(5,10), Item(5,22), Item(5,45), Item(5,5), Item(5,11), Item(5,6), Item(5,25))) created: HttpResponse(200 OK,List(Server: akka-http/10.1.12, Date: Wed, 29 Jul 2020 17:55:51 GMT),HttpEntity.Strict(text/plain; charset=UTF-8,13 bytes total),HttpProtocol(HTTP/1.1))
+order: Order(List(Item(3,6), Item(3,23), Item(3,9), Item(3,18), Item(3,2), Item(3,22), Item(3,13), Item(3,3), Item(3,26), Item(3,1))) created: HttpResponse(200 OK,List(Server: akka-http/10.1.12, Date: Wed, 29 Jul 2020 17:55:51 GMT),HttpEntity.Strict(text/plain; charset=UTF-8,13 bytes total),HttpProtocol(HTTP/1.1))
 ...
 ```
 
@@ -164,12 +163,12 @@ If the requirement changed in the future, we can consider to use `Akka Persisten
 
 ### RESTful API Server
 
-There are many ways to communicate between client and server. Here I choose RESTful is because simple and easy to achieve.
-To get together with old friend is comfortable especially there is the time limit.   
+There are many ways to communicate between the client and server. Here I choose RESTful is because simple and easy to achieve.
+To get together with an old friend is comfortable especially there is the time limit.   
 
 ### Menu Items
 
-Originally I want to pre-generate the data into memory cache. But I ran out of time so I used a simple random generator.
+Originally I want to pre-generate the menu items into memory cache. Due to I ran out of time, so I used a simple random generator.
 
 ### Client APP
 
@@ -182,3 +181,4 @@ I leave other operations in RESTful APIs, and provide the ready-to-use Postman s
 * Understand more about Akka Actor System.
 * Data persistence.
 * Testing for the HTTP routes.
+* Better client APP.
