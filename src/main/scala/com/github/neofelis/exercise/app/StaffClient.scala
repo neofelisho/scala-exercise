@@ -1,4 +1,4 @@
-package com.github.neofelis.exercise
+package com.github.neofelis.exercise.app
 
 import akka.NotUsed
 import akka.actor.ActorSystem

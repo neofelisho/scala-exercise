@@ -1,4 +1,4 @@
-package com.github.neofelis.exercise
+package com.github.neofelis.exercise.service
 
 import java.util.UUID
 

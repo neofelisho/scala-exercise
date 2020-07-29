@@ -1,4 +1,4 @@
-package com.github.neofelis.exercise
+package com.github.neofelis.exercise.model
 
 import scala.collection.concurrent.TrieMap
 import scala.reflect.ClassTag
