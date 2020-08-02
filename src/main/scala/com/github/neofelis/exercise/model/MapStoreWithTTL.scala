@@ -19,14 +19,24 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
 
   /** Create a key-value pair with TTL.
    *
-   * @param   key       is the key of the key-value pair with type [[K]].
-   * @param   value     is the value of the key-value pair with type [[V]].
-   * @param   expiredAt is the TTL of this key-value pair, the format is UNIX timestamp in milliseconds.
+   * @param key       is the key of the key-value pair with type [[K]].
+   * @param value     is the value of the key-value pair with type [[V]].
+   * @param expiredAt is the TTL of this key-value pair, the format is UNIX timestamp in milliseconds.
    * @return an [[Option]] containing the value if the key already exist, or [[None]] if the creation succeed.
    */
   def create(key: K, value: V, expiredAt: Long): Option[V] = {
     clearExpired()
     putItemIfAbsent(key, value, expiredAt)
+  }
+
+  /** Create a key-value pair with TTL.
+   *
+   * @param item is the key-value pairs with its TTL.
+   * @return an [[Option]] containing the value if the key already exist, or [[None]] if the creation succeed.
+   */
+  def create(item: (K, V, Long)): Option[V] = {
+    clearExpired()
+    putItemIfAbsent(item._1, item._2, item._3)
   }
 
   /** Create multiple key-value pairs with TTL.
@@ -55,13 +65,16 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
    *
    * @return an [[Option]] containing an array of value, or [[None]] if there is no live value.
    */
-  def listValue(): Option[Array[V]] = {
+  def listValue(): Iterable[V] = {
     clearExpired()
-    val result = store
+    store
       .view
       .values
-      .toArray
-    if (result.length == 0) None else Some(result)
+    //    val result = store
+    //      .view
+    //      .values
+    //      .toArray
+    //    if (result.length == 0) None else Some(result)
   }
 
   /** List all non-expired keys.

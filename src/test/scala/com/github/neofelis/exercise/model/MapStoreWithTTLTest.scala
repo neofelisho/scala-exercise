@@ -18,48 +18,48 @@ class MapStoreWithTTLTest extends AnyPropSpec with Matchers with ScalaCheckDrive
     forAll(Gen.choose(1, 100)) { n =>
       val store = new MapStoreWithTTL[Int, Long]()
       (1 to n).foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
-      store.listValue() match {
-        case None =>
-        case Some(items) => items.length shouldBe n
-      }
+      store.listValue().toList.length shouldBe n
     }
   }
 
   property("can add bulk items in parallel") {
-    forAll(Gen.listOfN(10, Gen.choose(1, 100))) { list =>
-      val store = new MapStoreWithTTL[String, Long]()
-      list
-        .map(n => (1 to n).map(_ => (UUID.randomUUID().toString, System.currentTimeMillis(), System.currentTimeMillis() + 10_000)))
-        .foreach(l => store.create(l.toArray))
-      store.listValue().get.length shouldBe list.sum
+    forAll(Gen.listOfN(10, Gen.choose(1, 100))) {
+      list =>
+        val store = new MapStoreWithTTL[String, Long]()
+        list
+          .map(n => (1 to n).map(_ => (UUID.randomUUID().toString, System.currentTimeMillis(), System.currentTimeMillis() + 10_000)))
+          .foreach(l => store.create(l.toArray))
+        store.listValue().toList.length shouldBe list.sum
     }
   }
 
   property("can query the added item") {
     val store = new MapStoreWithTTL[Int, Long]()
-    forAll(Gen.choose(1, 100)) { n =>
-      store.create(n, System.currentTimeMillis(), System.currentTimeMillis() + 10_000)
-      store.get(n) shouldBe a[Some[_]]
+    forAll(Gen.choose(1, 100)) {
+      n =>
+        store.create(n, System.currentTimeMillis(), System.currentTimeMillis() + 10_000)
+        store.get(n) shouldBe a[Some[_]]
     }
   }
 
   property("won't list expired items") {
     val store = new MapStoreWithTTL[Int, Long]()
     (1 to 10).foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 100))
-    store.listValue().get.length shouldBe 10
+    store.listValue().toList.length shouldBe 10
     Thread.sleep(200)
     store.listValue() shouldBe None
   }
 
   property("can delete items") {
     val store = new MapStoreWithTTL[Int, Long]()
-    forAll(Gen.choose(1, 100)) { n =>
-      store.listValue() shouldBe None
-      (1 to n).foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
-      store.listKeys() shouldBe a[Some[_]]
-      store.listKeys().get.length shouldBe n
-      store.listKeys().get.foreach(key => store.delete(key))
-      store.listValue() shouldBe None
+    forAll(Gen.choose(1, 100)) {
+      n =>
+        store.listValue() shouldBe None
+        (1 to n).foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
+        store.listKeys() shouldBe a[Some[_]]
+        store.listKeys().get.length shouldBe n
+        store.listKeys().get.foreach(key => store.delete(key))
+        store.listValue() shouldBe None
     }
   }
 }

@@ -22,7 +22,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
       val service = new OrderService[Int, Int, Long]()
       val groupId = Random.between(1, 10)
       (1 to n).foreach(x => service.create(groupId, x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
-      service.list(groupId).get.length shouldBe n
+      service.list(groupId).toList.length shouldBe n
     }
   }
 
@@ -30,7 +30,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
     forAll(Gen.choose(1, 100)) { n =>
       val service = new OrderService[Int, Int, Long]()
       (1 to n).foreach(x => service.create(x, x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
-      (1 to n).foreach(x => service.list(x).get.length shouldBe 1)
+      (1 to n).foreach(x => service.list(x).toList.length shouldBe 1)
     }
   }
 
@@ -45,7 +45,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
         }
         .foreach(x => service.create(x.toArray))
 
-      (1 to 10).map(n => service.list(n).get.length).sum shouldBe list.sum
+      (1 to 10).map(n => service.list(n).toList.length).sum shouldBe list.sum
     }
   }
 
@@ -62,7 +62,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
   property("won't list expired items") {
     val service = new OrderService[Int, Int, Long]()
     (1 to 10).foreach(n => service.create(n, n, System.currentTimeMillis(), System.currentTimeMillis() + 100))
-    (1 to 10).foreach(n => service.list(n).get.length shouldBe 1)
+    (1 to 10).foreach(n => service.list(n).toList.length shouldBe 1)
     Thread.sleep(200)
     (1 to 10).foreach(n => service.list(n) shouldBe None)
   }
@@ -75,7 +75,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
         service.list(tableId) shouldBe None
         (1 to n).foreach(x => service.create(tableId, x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
         service.list(tableId) shouldBe a[Some[_]]
-        service.list(tableId).get.length shouldBe n
+        service.list(tableId).toList.length shouldBe n
         (1 to n).foreach(x => service.delete(tableId, x))
         service.list(tableId) shouldBe None
     }

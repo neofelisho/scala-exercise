@@ -57,7 +57,7 @@ object RestaurantServer extends App {
     }
   }
 
-  def listTableOrder(tableId: Int): Future[Option[Array[ResponseItem]]] = Future {
+  def listTableOrder(tableId: Int): Future[Iterable[ResponseItem]] = Future {
     orderService.list(tableId)
   }
 
@@ -78,11 +78,11 @@ object RestaurantServer extends App {
             pathEnd {
               get {
                 // there might be no item for a given id
-                val maybeList: Future[Option[Array[ResponseItem]]] = listTableOrder(tableId)
+                val maybeList: Future[Iterable[ResponseItem]] = listTableOrder(tableId)
 
                 onSuccess(maybeList) {
-                  case Some(items) => complete(items)
-                  case None => complete(StatusCodes.NotFound)
+                  items => complete(items)
+                  //                  case None => complete(StatusCodes.NotFound)
                 }
               }
             },

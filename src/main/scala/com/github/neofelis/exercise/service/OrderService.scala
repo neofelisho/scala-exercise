@@ -18,18 +18,33 @@ class OrderService[T: ClassTag, K: ClassTag, V: ClassTag] {
   /**
    * Create a new order containing single item.
    *
-   * @param tableId the id of table.
-   * @param key the key of the order item.
-   * @param value the value of the order item.
+   * @param tableId   the id of table.
+   * @param key       the key of the order item.
+   * @param value     the value of the order item.
    * @param expiredAt the time-to-live of the order item.
    */
-  def create(tableId: T, key: K, value: V, expiredAt: Long): Unit = {
+  def create(tableId: T, key: K, value: V, expiredAt: Long): Option[V] = {
     store.get(tableId) match {
       case None =>
         val newTableStore = new MapStoreWithTTL[K, V]()
-        newTableStore.create(key, value, expiredAt)
         store.put(tableId, newTableStore)
+        newTableStore.create(key, value, expiredAt)
       case Some(tableStore) => tableStore.create(key, value, expiredAt)
+    }
+  }
+
+  /**
+   * Create a new order containing single item.
+   *
+   * @param item the item containing tableId, key, value and time-to-live to create.
+   */
+  def create(item: (T, K, V, Long)): Unit = {
+    store.get(item._1) match {
+      case None =>
+        val newTableStore = new MapStoreWithTTL[K, V]()
+        newTableStore.create(item._2, item._3, item._4)
+        store.put(item._1, newTableStore)
+      case Some(tableStore) => tableStore.create(item._2, item._3, item._4)
     }
   }
 
@@ -57,7 +72,7 @@ class OrderService[T: ClassTag, K: ClassTag, V: ClassTag] {
    * @param tableId the id of table.
    * @return an [[Option]] containing an [[Array]] of order items, or [[None]] if there is no items for the table.
    */
-  def list(tableId: T): Option[Array[V]] = {
+  def list(tableId: T): Iterable[V] = {
     store.get(tableId) match {
       case None => None
       case Some(tableStore) => tableStore.listValue()
@@ -68,7 +83,7 @@ class OrderService[T: ClassTag, K: ClassTag, V: ClassTag] {
    * Get the detail of specific order item.
    *
    * @param tableId the id of table.
-   * @param key the key of the order item.
+   * @param key     the key of the order item.
    * @return an [[Option]] containing the order item, or [[None]] if there is no corresponding item.
    */
   def get(tableId: T, key: K): Option[V] = {
@@ -82,7 +97,7 @@ class OrderService[T: ClassTag, K: ClassTag, V: ClassTag] {
    * Delete an order item.
    *
    * @param tableId the id of the table.
-   * @param key the key of the order item.
+   * @param key     the key of the order item.
    * @return an [[Option]] containing the deleted item, or [[None]] if nothing has been deleted by the key.
    */
   def delete(tableId: T, key: K): Option[V] = {
