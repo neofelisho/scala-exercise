@@ -10,16 +10,16 @@ Server will keep the order before the order have been served.
 
 There are two APPs in this project. One is the restaurant server, another is simulated clients.
 
-### Restaurant Server
+### Restaurant API Server
 
 This server is build by [Akka HTTP](https://doc.akka.io/docs/akka-http/current/index.html). 
 Enter the `sbt shell` and execute `runMain com.github.neofelis.exercise.controller.RestaurantServer` to start.
 
 ```shell script
-[IJ]sbt:exercise> runMain com.github.neofelis.exercise.controller.RestaurantServer 
+[IJ]sbt:exercise> runMain com.github.neofelis.exercise.web.ServiceMain
 [warn] Multiple main classes detected.  Run 'show discoveredMainClasses' to see the list
-[info] running com.github.neofelis.exercise.controller.RestaurantServer 
-00:54:08.650 [default-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+[info] running com.github.neofelis.exercise.web.ServiceMain 
+13:53:36.718 [default-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
 Server online at http://localhost:8080/
 Press RETURN to stop...
 ```
