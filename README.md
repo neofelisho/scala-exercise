@@ -177,8 +177,8 @@ I leave other operations in RESTful APIs, and provide the ready-to-use Postman s
 
 ## To Be Improve
 
-* Decouple the route settings with HTTP server.
-* Understand more about Akka Actor System.
-* Data persistence.
-* Testing for the HTTP routes.
-* Better client APP.
+*[x] Decouple the route settings with HTTP server.
+*[ ] Understand more about Akka Actor System.
+*[ ] Data persistence.
+*[x] Testing for the HTTP routes.
+*[ ] Better client APP.

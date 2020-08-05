@@ -27,7 +27,7 @@ trait OrderItemRoute extends OrderItemApi {
         entity(as[RequestOrder]) { requestOrder =>
           val saved: Future[Done] = createOrder(requestOrder)
           onComplete(saved) {
-            Done => complete("order created")
+            Done => complete(StatusCodes.Created, "order created")
           }
         }
       }
