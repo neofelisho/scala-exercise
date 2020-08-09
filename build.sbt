@@ -2,7 +2,7 @@ name := "exercise"
 
 version := "0.1"
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.13.3"
 val akkaVersion = "2.6.8"
 val akkaHttpVersion = "10.1.12"
 

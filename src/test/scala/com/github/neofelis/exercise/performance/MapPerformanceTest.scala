@@ -14,7 +14,7 @@ object MapPerformanceTest extends App with MyTimer {
   val trieMap = new MapStoreWithTTL[String, OrderItem]()
 
   def testLoop(function: OrderItem => Option[OrderItem]): Unit = {
-    (1 to 10000).par.foreach(n => {
+    (1 to 10000).foreach(n => {
       val item = OrderItem(UUID.randomUUID().toString, n, n, System.currentTimeMillis() + 10000)
       function(item)
     })

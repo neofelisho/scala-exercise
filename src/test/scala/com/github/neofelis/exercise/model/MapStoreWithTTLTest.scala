@@ -21,7 +21,7 @@ class MapStoreWithTTLTest extends AnyPropSpecLike with Matchers with ScalaCheckD
   property("can add items in parallel") {
     forAll(Gen.choose(1, 100)) { n =>
       val store = initializeMapStore()
-      (1 to n).par.foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
+      (1 to n).foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
       store.listValue().length shouldBe n
     }
   }
@@ -31,7 +31,6 @@ class MapStoreWithTTLTest extends AnyPropSpecLike with Matchers with ScalaCheckD
       val store = new MapStoreWithTTL[String, Long]()
       list
         .map(n => (1 to n).map(_ => (UUID.randomUUID().toString, System.currentTimeMillis(), System.currentTimeMillis() + 10000)))
-        .par
         .foreach(l => store.create(l.toArray))
       store.listValue().length shouldBe list.sum
     }
@@ -47,7 +46,7 @@ class MapStoreWithTTLTest extends AnyPropSpecLike with Matchers with ScalaCheckD
 
   property("won't list expired items") {
     val store = initializeMapStore()
-    (1 to 10).par.foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 100))
+    (1 to 10).foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 100))
     store.listValue().length shouldBe 10
     Thread.sleep(200)
     store.listValue().length shouldBe 0
@@ -57,7 +56,7 @@ class MapStoreWithTTLTest extends AnyPropSpecLike with Matchers with ScalaCheckD
     val store = initializeMapStore()
     forAll(Gen.choose(1, 100)) { n =>
       store.listValue().length shouldBe 0
-      (1 to n).par.foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
+      (1 to n).foreach(x => store.create(x, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
       store.listKeys() shouldBe a[Array[_]]
       store.listKeys().length shouldBe n
       store.listKeys().foreach(key => store.delete(key))

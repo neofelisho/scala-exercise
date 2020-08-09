@@ -46,7 +46,9 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
    */
   def get(key: K): Option[V] = {
     clearExpired()
-    store.get(key)
+    store
+      .view
+      .get(key)
   }
 
   /** List all non-expired value.
@@ -56,6 +58,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
   def listValue(): Array[V] = {
     clearExpired()
     store
+      .view
       .values
       .toArray
   }
@@ -67,6 +70,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
   def listKeys(): Array[K] = {
     clearExpired()
     store
+      .view
       .keys
       .toArray
   }
@@ -99,6 +103,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
    */
   private def clearExpired(): TrieMap[Long, Array[K]] = {
     expiry
+      .view
       .filterKeys(_ < System.currentTimeMillis())
       .values
       .flatten
@@ -106,7 +111,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
         store.remove(k)
       })
 
-    expiry.filter(_._1 >= System.currentTimeMillis())
+    expiry.filterInPlace((k, _) => k >= System.currentTimeMillis())
   }
 
   /** Put the key-value pair with TTL into the main storage if it's absent.

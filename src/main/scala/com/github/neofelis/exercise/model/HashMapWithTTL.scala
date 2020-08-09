@@ -14,12 +14,15 @@ class HashMapWithTTL[K: ClassTag, V: ClassTag] {
 
   def get(key: K): Option[V] = {
     clearExpired()
-    store.get(key)
+    store
+      .view
+      .get(key)
   }
 
   def listValue(): Array[V] = {
     clearExpired()
     store
+      .view
       .values
       .toArray
   }
@@ -27,6 +30,7 @@ class HashMapWithTTL[K: ClassTag, V: ClassTag] {
   def listKeys(): Array[K] = {
     clearExpired()
     store
+      .view
       .keys
       .toArray
   }
@@ -41,6 +45,7 @@ class HashMapWithTTL[K: ClassTag, V: ClassTag] {
   private def clearExpired(): Unit = {
     synchronized {
       val expiredItems = expiry
+        .view
         .filterKeys(_ < System.currentTimeMillis())
 
       expiry = expiry -- expiredItems.keys
