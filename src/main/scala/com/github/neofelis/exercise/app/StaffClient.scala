@@ -61,7 +61,7 @@ object StaffClient extends App {
     }
 
   // util
-  private def menuId(): Int = Random.between(1, menuCount)
+  private def menuId(): Int = Random.nextInt(menuCount) + 1
 
   // configuration
   private def config = ConfigFactory

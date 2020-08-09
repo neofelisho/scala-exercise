@@ -43,8 +43,8 @@ class OrderItemRouteTest extends OrderItemRoute with AnyWordSpecLike with Matche
       }
     }
 
-    "return OrderItem list for GET request to table path with some items" in{
-      val orderItem = OrderItem(UUID.randomUUID().toString,3,1,System.currentTimeMillis()+10_000)
+    "return OrderItem list for GET request to table path with some items" in {
+      val orderItem = OrderItem(UUID.randomUUID().toString, 3, 1, System.currentTimeMillis() + 10000)
       orderService.create(orderItem.tableId, orderItem.id, orderItem, orderItem.servingAt)
       val request = Get("/order/3")
       request ~> route ~> check {
@@ -53,15 +53,15 @@ class OrderItemRouteTest extends OrderItemRoute with AnyWordSpecLike with Matche
       }
     }
 
-    "return NotFound for GET request to the table path with no items" in{
+    "return NotFound for GET request to the table path with no items" in {
       val request = Get("/order/4")
       request ~> route ~> check {
         status shouldEqual StatusCodes.NotFound
       }
     }
 
-    "return OrderItem for GET request to the existing item path" in{
-      val orderItem = OrderItem(UUID.randomUUID().toString,1,1,System.currentTimeMillis()+10_000)
+    "return OrderItem for GET request to the existing item path" in {
+      val orderItem = OrderItem(UUID.randomUUID().toString, 1, 1, System.currentTimeMillis() + 10000)
       orderService.create(orderItem.tableId, orderItem.id, orderItem, orderItem.servingAt)
       val request = Get(s"/order/1/${orderItem.id}")
       request ~> route ~> check {
@@ -70,15 +70,15 @@ class OrderItemRouteTest extends OrderItemRoute with AnyWordSpecLike with Matche
       }
     }
 
-    "return NotFound for GET request to the non-existing item path" in{
+    "return NotFound for GET request to the non-existing item path" in {
       val request = Get("/order/1/no-such-an-item")
       request ~> route ~> check {
         status shouldEqual StatusCodes.NotFound
       }
     }
 
-    "return OrderItem for DELETE request to the existing item path" in{
-      val orderItem = OrderItem(UUID.randomUUID().toString,1,1,System.currentTimeMillis()+10_000)
+    "return OrderItem for DELETE request to the existing item path" in {
+      val orderItem = OrderItem(UUID.randomUUID().toString, 1, 1, System.currentTimeMillis() + 10000)
       orderService.create(orderItem.tableId, orderItem.id, orderItem, orderItem.servingAt)
       val request = Delete(s"/order/1/${orderItem.id}")
       request ~> route ~> check {
@@ -87,7 +87,7 @@ class OrderItemRouteTest extends OrderItemRoute with AnyWordSpecLike with Matche
       }
     }
 
-    "return NotFound for DELETE request to the non-existing item path" in{
+    "return NotFound for DELETE request to the non-existing item path" in {
       val request = Delete("/order/1/no-such-an-item")
       request ~> route ~> check {
         status shouldEqual StatusCodes.NotFound

@@ -10,6 +10,7 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import scala.util.Random
 
 class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPropertyChecks {
+
   property("should start with empty store") {
     val service = new OrderService[Int, Int, Long]()
     forAll(Gen.posNum[Int]) { n =>
@@ -20,8 +21,8 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
   property("can add items to one group in parallel") {
     forAll(Gen.choose(1, 100)) { n =>
       val service = new OrderService[Int, Int, Long]()
-      val groupId = Random.between(1, 10)
-      (1 to n).foreach(x => service.create(groupId, x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
+      val groupId = 1 + Random.nextInt(10)
+      (1 to n).foreach(x => service.create(groupId, x, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
       service.list(groupId).get.length shouldBe n
     }
   }
@@ -29,7 +30,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
   property("can add items to different groups in parallel") {
     forAll(Gen.choose(1, 100)) { n =>
       val service = new OrderService[Int, Int, Long]()
-      (1 to n).foreach(x => service.create(x, x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
+      (1 to n).foreach(x => service.create(x, x, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
       (1 to n).foreach(x => service.list(x).get.length shouldBe 1)
     }
   }
@@ -41,7 +42,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
         .zipWithIndex
         .map {
           case (n, idx) =>
-            (1 to n).map(_ => (idx + 1, UUID.randomUUID().toString, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
+            (1 to n).map(_ => (idx + 1, UUID.randomUUID().toString, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
         }
         .foreach(x => service.create(x.toArray))
 
@@ -54,7 +55,7 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
     forAll(Gen.choose(1, 10)) {
       tableId =>
         val itemId = UUID.randomUUID().toString
-        service.create(tableId, itemId, System.currentTimeMillis(), System.currentTimeMillis() + 10_000)
+        service.create(tableId, itemId, System.currentTimeMillis(), System.currentTimeMillis() + 10000)
         service.get(tableId, itemId) shouldBe a[Some[_]]
     }
   }
@@ -64,20 +65,19 @@ class OrderServiceTest extends AnyPropSpec with Matchers with ScalaCheckDrivenPr
     (1 to 10).foreach(n => service.create(n, n, System.currentTimeMillis(), System.currentTimeMillis() + 100))
     (1 to 10).foreach(n => service.list(n).get.length shouldBe 1)
     Thread.sleep(200)
-    (1 to 10).foreach(n => service.list(n) shouldBe None)
+    (1 to 10).foreach(n => service.list(n).get.length shouldBe 0)
   }
 
   property("can delete items") {
-    val service = new OrderService[Int, Int, Long]
-    forAll(Gen.choose(1, 100)) {
-      n =>
-        val tableId = Random.between(1, 10)
-        service.list(tableId) shouldBe None
-        (1 to n).foreach(x => service.create(tableId, x, System.currentTimeMillis(), System.currentTimeMillis() + 10_000))
-        service.list(tableId) shouldBe a[Some[_]]
-        service.list(tableId).get.length shouldBe n
-        (1 to n).foreach(x => service.delete(tableId, x))
-        service.list(tableId) shouldBe None
+    forAll(Gen.choose(1, 100)) { n =>
+      val service = new OrderService[Int, Int, Long]
+      val tableId = 1 + Random.nextInt(10)
+      service.list(tableId) shouldBe None
+      (1 to n).foreach(x => service.create(tableId, x, System.currentTimeMillis(), System.currentTimeMillis() + 10000))
+      service.list(tableId) shouldBe a[Some[_]]
+      service.list(tableId).get.length shouldBe n
+      (1 to n).foreach(x => service.delete(tableId, x))
+      service.list(tableId).get.length shouldBe 0
     }
   }
 }

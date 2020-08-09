@@ -128,7 +128,7 @@ trait OrderItemApi extends OrderItemMarshaller {
   private def mapToOrderItem(requestItem: RequestItem): OrderItem =
     OrderItem(randomUUID().toString, requestItem.tableId, requestItem.menuId, servingTime())
 
-  private def servingTime(): Long = System.currentTimeMillis() + Random.between(minServingTime, maxServingTime) * 1000
+  private def servingTime(): Long = System.currentTimeMillis() + (minServingTime + Random.nextInt(maxServingTime + 1)) * 1000
 
   private def minServingTime: Int = config.getInt("min-serving-seconds")
 

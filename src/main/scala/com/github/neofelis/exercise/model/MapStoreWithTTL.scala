@@ -19,9 +19,9 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
 
   /** Create a key-value pair with TTL.
    *
-   * @param   key       is the key of the key-value pair with type [[K]].
-   * @param   value     is the value of the key-value pair with type [[V]].
-   * @param   expiredAt is the TTL of this key-value pair, the format is UNIX timestamp in milliseconds.
+   * @param key       is the key of the key-value pair with type [[K]].
+   * @param value     is the value of the key-value pair with type [[V]].
+   * @param expiredAt is the TTL of this key-value pair, the format is UNIX timestamp in milliseconds.
    * @return an [[Option]] containing the value if the key already exist, or [[None]] if the creation succeed.
    */
   def create(key: K, value: V, expiredAt: Long): Option[V] = {
@@ -46,35 +46,29 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
    */
   def get(key: K): Option[V] = {
     clearExpired()
-    store
-      .view
-      .get(key)
+    store.get(key)
   }
 
   /** List all non-expired value.
    *
    * @return an [[Option]] containing an array of value, or [[None]] if there is no live value.
    */
-  def listValue(): Option[Array[V]] = {
+  def listValue(): Array[V] = {
     clearExpired()
-    val result = store
-      .view
+    store
       .values
       .toArray
-    if (result.length == 0) None else Some(result)
   }
 
   /** List all non-expired keys.
    *
    * @return an [[Option]] containing an array of keys, or [[None]] if there is no live key.
    */
-  def listKeys(): Option[Array[K]] = {
+  def listKeys(): Array[K] = {
     clearExpired()
-    val result = store
-      .view
+    store
       .keys
       .toArray
-    if (result.length == 0) None else Some(result)
   }
 
   /** Delete the key-value pair by given key.
@@ -95,7 +89,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
   private def setExpiry(key: K, expiredAt: Long): Unit = {
     expiry.get(expiredAt) match {
       case None => expiry.put(expiredAt, Array(key))
-      case Some(value) => expiry.put(expiredAt, value.appended(key))
+      case Some(value) => expiry.put(expiredAt, value :+ key)
     }
   }
 
@@ -103,9 +97,8 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
    *
    * @return the expiry map.
    */
-  private def clearExpired(): expiry.type = {
+  private def clearExpired(): TrieMap[Long, Array[K]] = {
     expiry
-      .view
       .filterKeys(_ < System.currentTimeMillis())
       .values
       .flatten
@@ -113,8 +106,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
         store.remove(k)
       })
 
-    expiry
-      .filterInPlace((k, _) => k >= System.currentTimeMillis())
+    expiry.filter(_._1 >= System.currentTimeMillis())
   }
 
   /** Put the key-value pair with TTL into the main storage if it's absent.

@@ -60,7 +60,7 @@ class OrderService[T: ClassTag, K: ClassTag, V: ClassTag] {
   def list(tableId: T): Option[Array[V]] = {
     store.get(tableId) match {
       case None => None
-      case Some(tableStore) => tableStore.listValue()
+      case Some(tableStore) => Some(tableStore.listValue())
     }
   }
 
