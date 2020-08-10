@@ -1,6 +1,7 @@
 package com.github.neofelis.exercise.model
 
 import scala.collection.concurrent.TrieMap
+import scala.collection.mutable
 import scala.reflect.ClassTag
 
 /**
@@ -15,7 +16,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
   // store is the main storage for saving key-value pairs
   private val store = TrieMap[K, V]()
   // expiry keeps the time-to-live for each key in the store
-  private val expiry = TrieMap[Long, Array[K]]()
+  private val expiry = TrieMap[Long, mutable.HashSet[K]]()
 
   /** Create a key-value pair with TTL.
    *
@@ -91,9 +92,10 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
    * @param expiredAt is the TTL of this key-value pair, the format is UNIX timestamp in milliseconds.
    */
   private def setExpiry(key: K, expiredAt: Long): Unit = {
-    expiry.get(expiredAt) match {
-      case None => expiry.put(expiredAt, Array(key))
-      case Some(value) => expiry.put(expiredAt, value :+ key)
+    synchronized {
+      expiry
+        .getOrElseUpdate(expiredAt, mutable.HashSet.empty)
+        .add(key)
     }
   }
 
@@ -101,7 +103,7 @@ class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
    *
    * @return the expiry map.
    */
-  private def clearExpired(): TrieMap[Long, Array[K]] = {
+  private def clearExpired(): expiry.type = {
     expiry
       .view
       .filterKeys(_ < System.currentTimeMillis())
