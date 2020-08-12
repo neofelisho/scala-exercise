@@ -18,5 +18,6 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
-  "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
+  "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0",
+  "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test
 )
