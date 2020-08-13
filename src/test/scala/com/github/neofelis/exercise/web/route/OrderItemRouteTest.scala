@@ -5,7 +5,7 @@ import java.util.UUID
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.MalformedRequestContentRejection
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.github.neofelis.exercise.service.OrderService
+import com.github.neofelis.exercise.service.TrieMapOrderService
 import com.github.neofelis.exercise.web.message.OrderItemMessage._
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.concurrent.ScalaFutures
@@ -15,7 +15,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import scala.concurrent.ExecutionContextExecutor
 
 class OrderItemRouteTest extends OrderItemRoute with AnyWordSpecLike with Matchers with ScalaFutures with ScalatestRouteTest {
-  override implicit val orderService: OrderService[Int, String, OrderItem] = new OrderService[Int, String, OrderItem]()
+  override implicit val orderService: TrieMapOrderService[Int, String, OrderItem] = new TrieMapOrderService[Int, String, OrderItem]()
   override implicit val executionContextExecutor: ExecutionContextExecutor = system.dispatcher
   override implicit val config: Config = ConfigFactory
     .load("application.conf")

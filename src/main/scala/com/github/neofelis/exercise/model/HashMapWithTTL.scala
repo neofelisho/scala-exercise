@@ -12,6 +12,11 @@ class HashMapWithTTL[K: ClassTag, V: ClassTag] {
     putItemIfAbsent((key, value, expiredAt))
   }
 
+  def create(items: Array[(K, V, Long)]): Array[Option[V]] = {
+    clearExpired()
+    items.map(putItemIfAbsent)
+  }
+
   def get(key: K): Option[V] = {
     clearExpired()
     store

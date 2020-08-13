@@ -7,7 +7,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.github.neofelis.exercise.service.OrderService
+import com.github.neofelis.exercise.service.TrieMapOrderService
 import com.github.neofelis.exercise.web.message.OrderItemMarshaller
 import com.github.neofelis.exercise.web.message.OrderItemMessage._
 import com.typesafe.config.Config
@@ -91,7 +91,7 @@ trait OrderItemRoute extends OrderItemApi {
 }
 
 trait OrderItemApi extends OrderItemMarshaller {
-  implicit val orderService: OrderService[Int, String, OrderItem]
+  implicit val orderService: TrieMapOrderService[Int, String, OrderItem]
 
   implicit val executionContextExecutor: ExecutionContextExecutor
 

@@ -9,10 +9,10 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 import scala.collection.parallel.CollectionConverters._
 
-class MapStoreWithTTLTest extends AnyPropSpecLike with Matchers with ScalaCheckDrivenPropertyChecks {
-  private def initializeMapStore(): MapStoreWithTTL[Int, Long] = {
+class TrieMapWithTTLTest extends AnyPropSpecLike with Matchers with ScalaCheckDrivenPropertyChecks {
+  private def initializeMapStore(): TrieMapWithTTL[Int, Long] = {
 //    new HashMapWithTTL[Int, Long]()
-    new MapStoreWithTTL[Int, Long]()
+    new TrieMapWithTTL[Int, Long]()
   }
 
   property("should start with empty store") {
@@ -30,7 +30,7 @@ class MapStoreWithTTLTest extends AnyPropSpecLike with Matchers with ScalaCheckD
 
   property("can add bulk items in parallel") {
     forAll(Gen.listOfN(10, Gen.choose(1, 100))) { list =>
-      val store = new MapStoreWithTTL[String, Long]()
+      val store = new TrieMapWithTTL[String, Long]()
       list
         .map(n => (1 to n).map(_ => (UUID.randomUUID().toString, System.currentTimeMillis(), System.currentTimeMillis() + 10_000)))
         .par

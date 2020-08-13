@@ -14,7 +14,7 @@ import scala.concurrent.{Await, Future}
 object MapPerformanceTest extends App with MyTimer {
 
   val hashMap = new HashMapWithTTL[String, OrderItem]()
-  val trieMap = new MapStoreWithTTL[String, OrderItem]()
+  val trieMap = new TrieMapWithTTL[String, OrderItem]()
 
   val items = (1 to 10_000).par.map(n => {
     OrderItem(UUID.randomUUID().toString, n, n, System.currentTimeMillis() + 10_000)

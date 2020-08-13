@@ -5,13 +5,13 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 /**
- * [[MapStoreWithTTL]] is a concurrent thread-safe lock-free [[Map]] with time-to-live mechanism.
+ * [[TrieMapWithTTL]] is a concurrent thread-safe lock-free [[Map]] with time-to-live mechanism.
  * It provides good random access performance based on [[TrieMap]].
  *
  * @tparam K the type of key.
  * @tparam V the type of value.
  */
-class MapStoreWithTTL[K: ClassTag, V: ClassTag]() {
+class TrieMapWithTTL[K: ClassTag, V: ClassTag]() {
 
   // store is the main storage for saving key-value pairs
   private val store = TrieMap[K, V]()

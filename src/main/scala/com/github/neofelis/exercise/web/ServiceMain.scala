@@ -2,7 +2,7 @@ package com.github.neofelis.exercise.web
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import com.github.neofelis.exercise.service.OrderService
+import com.github.neofelis.exercise.service.TrieMapOrderService
 import com.github.neofelis.exercise.web.message.OrderItemMessage.OrderItem
 import com.github.neofelis.exercise.web.route.OrderItemRoute
 import com.typesafe.config.{Config, ConfigFactory}
@@ -17,7 +17,7 @@ object ServiceMain extends App with OrderItemRoute {
   // needed for the future map/flatmap in the end and future in async apis
   override implicit val executionContextExecutor: ExecutionContextExecutor = system.dispatcher
   // the store of table orders
-  override implicit val orderService: OrderService[Int, String, OrderItem] = new OrderService[Int, String, OrderItem]()
+  override implicit val orderService: TrieMapOrderService[Int, String, OrderItem] = new TrieMapOrderService[Int, String, OrderItem]()
   // configuration
   override implicit val config: Config = ConfigFactory
     .load("application.conf")
